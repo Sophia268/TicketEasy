@@ -124,8 +124,8 @@ jobs:
 
           echo "Found source APK: $SOURCE_APK"
 
-          # Define the fixed name for the latest release
-          LATEST_APK="android/RegistrationEasy-Android-Latest.apk"
+          # Define the fixed name for the latest release (Must match the URL requirement)
+          LATEST_APK="android/TicketEasy-Android-latest.apk"
 
           # Copy source to latest filename
           cp "$SOURCE_APK" "$LATEST_APK"

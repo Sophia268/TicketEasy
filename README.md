@@ -1,11 +1,19 @@
-# RegistrationEasy
+# TicketEasy
 
-**RegistrationEasy** 是一个 **Android** 应用程序，演示了基于 **Avalonia UI** 和 **.NET 10** 的机器码授权与注册验证方案。
+**TicketEasy** 是一个 **Android** 应用程序，演示了基于 **Avalonia UI** 和 **.NET 10** 的机器码授权与注册验证方案。
 
 - 使用 “帮您发发”（80fafa）网站生成注册码，让软件变现更加容易。
 - 提供从 **本地构建** 到 **GitHub Actions 发布** 的完整 Android 示例流水线。
 
 项目完全开源，采用最宽松的 [MIT License](LICENSE)，您可以自由地将其集成到商业软件中，或将其移植到其他编程语言。
+
+---
+
+## 📥 下载安装 / Download
+
+- **最新版 APK (Latest)**: [TicketEasy-Android-latest.apk](https://github.com/Sophia268/TicketEasy/releases/download/latest/TicketEasy-Android-latest.apk)
+  - 该链接始终指向最新构建版本。
+- **历史版本**: [GitHub Releases](https://github.com/Sophia268/TicketEasy/releases)
 
 ---
 
