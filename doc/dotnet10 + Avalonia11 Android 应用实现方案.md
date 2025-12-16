@@ -55,8 +55,15 @@
 ### 2.1 操作系统建议
 
 - 开发环境：
-  - Windows 10/11（本项目实际环境）
-  - 或 Linux / macOS（均可作为开发端）
+  - **操作系统**：Windows 10/11（本项目实际环境）、Linux 或 macOS。
+  - **核心组件要求**：
+    - **Android SDK**：需通过 Android Studio 或命令行工具下载安装。
+      - 必须组件：`Android SDK Platform-Tools` (adb), `Android SDK Build-Tools`, `Android Emulator`。
+    - **模拟器 (Emulator)**：用于本地调试，建议创建 x86_64 架构的 AVD (Android Virtual Device)。
+  - **安装与设置简述**：
+    - 下载并安装 Android Studio（推荐方式，便于管理 SDK 和模拟器）。
+    - 在 SDK Manager 中勾选所需 SDK Platform 和 Tools。
+    - 配置环境变量：确保 `adb` 命令在终端可直接使用。
 - 目标运行环境：
   - Android 8+ 设备或模拟器
 
