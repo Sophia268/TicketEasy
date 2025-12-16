@@ -108,3 +108,37 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: false
+
+      - name: Update 'latest' Release
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find the APK file from the artifacts
+          SOURCE_APK=$(ls android/*.apk | head -n 1)
+
+          if [ -z "$SOURCE_APK" ]; then
+            echo "No APK found to publish as latest!"
+            exit 1
+          fi
+
+          echo "Found source APK: $SOURCE_APK"
+
+          # Define the fixed name for the latest release
+          LATEST_APK="android/RegistrationEasy-Android-Latest.apk"
+
+          # Copy source to latest filename
+          cp "$SOURCE_APK" "$LATEST_APK"
+
+          # Delete existing 'latest' release and tag if they exist
+          echo "Deleting old 'latest' release..."
+          gh release delete latest --cleanup-tag -y || echo "No existing 'latest' release to delete."
+
+          # Create new 'latest' release pointing to current commit
+          echo "Creating new 'latest' release..."
+          gh release create latest "$LATEST_APK" \
+            --title "Latest Build" \
+            --notes "This release always contains the latest build artifacts. Currently updated from ${GITHUB_REF_NAME}." \
+            --target $GITHUB_SHA \
+            --prerelease=false \
+            --latest=false
