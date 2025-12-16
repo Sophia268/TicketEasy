@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-android</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+    <TargetPlatformVersion>36.0</TargetPlatformVersion>
+    <Nullable>enable</Nullable>
+    <ApplicationId>com.TicketEasy.app</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidSigningKeyStore>registrationeasy.keystore</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>80fafa</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>80fafa</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>80fafa</AndroidSigningKeyPass>
+    <!-- Explicitly target arm64-v8a (and x86_64 for emulator) -->
+    <RuntimeIdentifiers Condition="'$(Configuration)' == 'Debug'">android-arm64;android-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="'$(Configuration)' == 'Release'">android-arm64</RuntimeIdentifiers>
+    <AssemblyName>RegistrationEasy.Android</AssemblyName>
+    
+    <!-- Disable Incremental Packaging for Release to prevent runtime crashes -->
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <AndroidUseAapt2>true</AndroidUseAapt2>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    
+    <!-- Explicitly disable Fast Deployment in ALL Configurations for now to fix crash -->
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Android" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RegistrationEasy.Common\RegistrationEasy.Common.csproj" />
+  </ItemGroup>
+</Project>

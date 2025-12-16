@@ -1,0 +1,128 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:TicketEasy.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
+             x:Class="TicketEasy.Views.MainView"
+             x:DataType="vm:MainWindowViewModel">
+
+    <Grid RowDefinitions="Auto, *, Auto, Auto" Margin="16">
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
+                <TextBlock Text="TicketEasy" FontSize="24" FontWeight="Bold"/>
+                <TextBlock Text="{Binding AppVersion, StringFormat='v{0}'}" FontSize="14" Foreground="Gray" VerticalAlignment="Bottom" Margin="0,0,0,4"/>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" IsVisible="{Binding !ShowAbout}">
+            <StackPanel Spacing="20">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Machine Code:" Margin="0,0,0,2"/>
+                    <TextBox Text="{Binding MachineCode}" IsReadOnly="True" TextWrapping="Wrap"/>
+                </StackPanel>
+
+                <StackPanel Spacing="6">
+                    <TextBlock Text="Registration Code:" Margin="0,0,0,2"/>
+                    <TextBox Text="{Binding RegistrationCode}" Height="100" TextWrapping="Wrap" AcceptsReturn="True"/>
+                </StackPanel>
+
+                <Button Content="Verify Code"
+                        Command="{Binding RegisterCommand}"
+                        HorizontalAlignment="Stretch"
+                        MinHeight="40"
+                        Margin="0,4,0,0"/>
+
+                <TextBlock Text="{Binding StatusMessage}" 
+                           Foreground="Red"
+                           FontWeight="Bold" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                 
+                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="4" Padding="10" Margin="0,10,0,0">
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Decoded Result" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <Grid ColumnDefinitions="120, *">
+                            <TextBlock Grid.Column="0" Text="Machine ID:"/>
+                            <TextBlock Grid.Column="1" Text="{Binding DecodedMachineId}" TextWrapping="Wrap"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="120, *">
+                            <TextBlock Grid.Column="0" Text="Period Type:"/>
+                            <TextBlock Grid.Column="1" Text="{Binding PeriodType}"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="120, *">
+                            <TextBlock Grid.Column="0" Text="Create Time:"/>
+                            <TextBlock Grid.Column="1" Text="{Binding CreateTime}"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="120, *">
+                            <TextBlock Grid.Column="0" Text="Expired Time:"/>
+                            <TextBlock Grid.Column="1" Text="{Binding ExpiredTime}"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <ScrollViewer Grid.Row="1" IsVisible="{Binding ShowAbout}">
+            <StackPanel Spacing="20" Margin="10,30,10,30">
+                <!-- Title & Version -->
+                <StackPanel Spacing="5" HorizontalAlignment="Center">
+                    <TextBlock Text="TicketEasy" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{DynamicResource SystemAccentColor}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
+                        <TextBlock Text="v" FontSize="14" Foreground="Gray"/>
+                        <TextBlock Text="{Binding AppVersion}" FontSize="14" Foreground="Gray"/>
+                    </StackPanel>
+                </StackPanel>
+                
+                <Separator Height="1" Background="#E0E0E0" Margin="0,10"/>
+
+                <!-- Description Block 1 -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="开源声明 / Open Source" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock TextWrapping="Wrap" LineHeight="24"
+                               Text="本程序为开源项目，完美支持 Windows、macOS 和 Linux 跨平台运行。欢迎您自由使用、分发和传播。&#x0a;This application is an open-source project that runs seamlessly on Windows, macOS, and Linux. Feel free to use, distribute, and share it."/>
+                </StackPanel>
+
+                <!-- Description Block 2 -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="集成与适配 / Integration" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock TextWrapping="Wrap" LineHeight="24"
+                               Text="您可以将本软件的核心逻辑移植到您的商业软件中，也可以将其适配到 Java, C++, Python 等任意编程语言版本。&#x0a;You can integrate the core logic into your software or adapt it to other languages like Java, C++, Python, etc."/>
+                </StackPanel>
+
+                <!-- Contact Block -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="联系与支持 / Support" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock TextWrapping="Wrap" 
+                               Text="如有功能建议、使用问题，或者想了解更多技术细节，请访问我的博客：&#x0a;For suggestions, questions, or technical details, please visit my blog:"/>
+                    <Button Content="访问 80fafa.com" Command="{Binding OpenBlogCommand}" 
+                            HorizontalAlignment="Left" 
+                            Background="Transparent" 
+                            Foreground="{DynamicResource SystemAccentColor}"
+                            BorderThickness="0"
+                            Cursor="Hand"/>
+                </StackPanel>
+
+                <!-- Back Button -->
+                <Button Content="返回 / Back" Command="{Binding ToggleAboutCommand}" 
+                        HorizontalAlignment="Center" 
+                        Width="120"
+                        HorizontalContentAlignment="Center"
+                        Margin="0,20,0,0"/>
+            </StackPanel>
+        </ScrollViewer>
+        
+        <Grid Grid.Row="2" ColumnDefinitions="*,*" Margin="0,12,0,4">
+            <Button Grid.Column="0"
+                    Content="Purchase Code"
+                    Command="{Binding PurchaseCommand}"
+                    Margin="0,0,8,0"
+                    MinHeight="36"/>
+            <Button Grid.Column="1"
+                    Content="About"
+                    Command="{Binding ToggleAboutCommand}"
+                    Margin="8,0,0,0"
+                    MinHeight="36"/>
+        </Grid>
+
+        <TextBlock Grid.Row="3" Text="Powered by Avalonia UI" FontSize="10" Foreground="Gray" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+    </Grid>
+</UserControl>
