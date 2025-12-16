@@ -132,11 +132,12 @@ jobs:
 
           # Delete existing 'latest' release and tag if they exist
           echo "Deleting old 'latest' release..."
-          gh release delete latest --cleanup-tag -y || echo "No existing 'latest' release to delete."
-
+          gh release delete latest --repo ${{ github.repository }} --cleanup-tag -y || echo "No existing 'latest' release to delete."
+          
           # Create new 'latest' release pointing to current commit
           echo "Creating new 'latest' release..."
           gh release create latest "$LATEST_APK" \
+            --repo ${{ github.repository }} \
             --title "Latest Build" \
             --notes "This release always contains the latest build artifacts. Currently updated from ${GITHUB_REF_NAME}." \
             --target $GITHUB_SHA \
