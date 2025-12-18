@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
+using TicketEasy.Services;
 using TicketEasy.ViewModels;
 using TicketEasy.Views;
 
@@ -10,6 +11,8 @@ namespace TicketEasy;
 
 public partial class App : Application
 {
+    public static ITicketScanner? Scanner { get; set; }
+
     public override void Initialize()
     {
         RequestedThemeVariant = ThemeVariant.Default;
@@ -23,7 +26,7 @@ public partial class App : Application
         {
             singleViewPlatform.MainView = new MainView
             {
-                DataContext = new MainWindowViewModel()
+                DataContext = new MainWindowViewModel(Scanner)
             };
         }
 

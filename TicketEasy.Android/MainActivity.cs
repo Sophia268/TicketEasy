@@ -3,7 +3,8 @@ using Android.Content.PM;
 using Android.OS;
 using Avalonia;
 using Avalonia.Android;
-using TicketEasy.Services;
+using TicketEasy.Android.Services;
+using ZXing.Mobile;
 
 namespace TicketEasy.Android;
 
@@ -20,18 +21,8 @@ public class MainActivity : AvaloniaMainActivity<App>
     {
         try
         {
-            MachineIdProvider.PlatformGetMachineId = () =>
-            {
-                try
-                {
-                    return global::Android.Provider.Settings.Secure.GetString(ContentResolver, global::Android.Provider.Settings.Secure.AndroidId) ?? "ANDROID_UNKNOWN";
-                }
-                catch (System.Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Error getting Android ID: {ex}");
-                    return "ANDROID_ERROR";
-                }
-            };
+            MobileBarcodeScanner.Initialize(Application);
+            App.Scanner = new AndroidTicketScanner();
 
             base.OnCreate(savedInstanceState);
         }
