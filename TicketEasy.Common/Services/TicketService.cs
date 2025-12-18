@@ -46,9 +46,14 @@ public class TicketService
             var content = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<ApiResponse<TicketData>>(content, _jsonOptions);
         }
-        catch
+        catch (Exception ex)
         {
-            return null;
+            return new ApiResponse<TicketData>
+            {
+                Status = "error",
+                Code = 999,
+                Msg = $"CheckConnectivity Error: {ex.Message}"
+            };
         }
     }
 

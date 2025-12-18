@@ -10,5 +10,5 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <application android:label="TicketEasy" android:icon="@drawable/icon" android:theme="@style/MyTheme.NoActionBar"></application>
+    <application android:label="TicketEasy" android:icon="@drawable/icon" android:theme="@style/MyTheme.NoActionBar" android:usesCleartextTraffic="true"></application>
 </manifest>
