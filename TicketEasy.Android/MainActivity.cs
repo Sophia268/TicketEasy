@@ -21,7 +21,7 @@ public class MainActivity : AvaloniaMainActivity<App>
     {
         try
         {
-            MobileBarcodeScanner.Initialize(Application);
+            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             App.Scanner = new AndroidTicketScanner();
 
             base.OnCreate(savedInstanceState);
@@ -33,6 +33,12 @@ public class MainActivity : AvaloniaMainActivity<App>
             global::Android.Util.Log.Error("TicketEasy", $"FATAL ERROR in MainActivity.OnCreate: {ex}");
             throw; // Re-throw to let the app crash visibly if we can't recover
         }
+    }
+
+    public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+    {
+        Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)

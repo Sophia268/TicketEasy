@@ -24,18 +24,29 @@
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    
-    <!-- Explicitly disable Fast Deployment in ALL Configurations for now to fix crash -->
-    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    
+    <AndroidEnableAot>false</AndroidEnableAot>
+    <RunAOT>false</RunAOT>
+    <RunAOTCompilation>false</RunAOTCompilation>
+    <PublishTrimmed>false</PublishTrimmed>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <AndroidEnableAot>false</AndroidEnableAot>
+    <RunAOT>false</RunAOT>
+    <RunAOTCompilation>false</RunAOTCompilation>
+    <PublishTrimmed>false</PublishTrimmed>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AndroidAotSkipAssembly Include="zxing.dll" />
+    <AndroidAotSkipAssembly Include="System.Drawing.Common.dll" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Android" Version="11.3.9" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.9" />
-    <PackageReference Include="ZXing.Net.Mobile" Version="2.4.1" />
+    <PackageReference Include="ZXing.Net.Mobile" Version="3.1.0-beta2" />
   </ItemGroup>
 
   <ItemGroup>
