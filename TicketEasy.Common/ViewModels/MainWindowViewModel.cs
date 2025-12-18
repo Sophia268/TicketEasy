@@ -83,6 +83,14 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private async Task ConnectAsync()
     {
+        // If already connected, disconnect
+        if (IsConnected)
+        {
+            IsConnected = false;
+            AddLog("Disconnected.");
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(ProductId))
         {
             AddLog("Error: Product ID is empty.");

@@ -65,31 +65,30 @@
                 
                 <!-- Settings Panel (Collapsible) -->
                 <Border Grid.Row="0" Classes="card" IsVisible="{Binding IsSettingsOpen}" Margin="0,0,0,16">
-                    <StackPanel Spacing="12">
-                        <TextBlock Text="配置" FontWeight="Bold" FontSize="16" Foreground="#444"/>
-                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto">
-                            <TextBox Grid.Column="0" Text="{Binding ProductId}" Watermark="Product ID" Margin="0,0,10,0" Height="40" VerticalContentAlignment="Center"/>
-                            <Button Grid.Column="1"
-                                    Command="{Binding ConnectCommand}"
-                                    Classes="connectBtn"
-                                    Classes.connected="{Binding IsConnected}"
-                                    Height="40" Width="100" HorizontalContentAlignment="Center"
-                                    CornerRadius="6">
-                                <Panel>
-                                    <TextBlock Text="连接" IsVisible="{Binding !IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
-                                    <TextBlock Text="已连接" IsVisible="{Binding IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
-                                </Panel>
-                            </Button>
-                        </Grid>
-                    </StackPanel>
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <TextBlock Grid.Column="0" Text="配置" FontWeight="Bold" FontSize="16" Foreground="#444" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBox Grid.Column="1" Text="{Binding ProductId}" Watermark="Product ID" Margin="0,0,10,0" Height="40" VerticalContentAlignment="Center"/>
+                        <Button Grid.Column="2"
+                                Command="{Binding ConnectCommand}"
+                                Classes="connectBtn"
+                                Classes.connected="{Binding IsConnected}"
+                                Height="40" Width="85" HorizontalContentAlignment="Center"
+                                CornerRadius="6">
+                            <Panel>
+                                <TextBlock Text="连接" IsVisible="{Binding !IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                                <TextBlock Text="已连接" IsVisible="{Binding IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                            </Panel>
+                        </Button>
+                    </Grid>
                 </Border>
 
                 <!-- Combined Scan & Manual Check Area -->
                 <StackPanel Grid.Row="1" Spacing="16" Margin="0,0,0,16" IsEnabled="{Binding IsConnected}">
                     
                     <!-- Scan Buttons -->
-                    <Grid ColumnDefinitions="*, Auto">
-                        <Button Grid.Column="0" Command="{Binding ScanCommand}" 
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <TextBlock Grid.Column="0" Text="扫码" FontWeight="Bold" FontSize="16" Foreground="#444" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <Button Grid.Column="1" Command="{Binding ScanCommand}" 
                                 HorizontalAlignment="Stretch" Height="60" 
                                 CornerRadius="12" Margin="0,0,10,0"
                                 Background="#6200EE" Foreground="White">
@@ -100,8 +99,8 @@
                             </StackPanel>
                         </Button>
                         
-                        <Button Grid.Column="1" Command="{Binding ScanImageCommand}"
-                                Height="60" Width="60"
+                        <Button Grid.Column="2" Command="{Binding ScanImageCommand}"
+                                Height="60" Width="85"
                                 CornerRadius="12"
                                 Background="#3700B3" Foreground="White"
                                 ToolTip.Tip="从相册选择">
@@ -111,13 +110,13 @@
                     </Grid>
 
                     <!-- Manual Input (Compact) -->
-                    <Border Classes="card" Margin="0" Padding="12">
+                    <Border Classes="card" Margin="0">
                         <Grid ColumnDefinitions="Auto, *, Auto">
-                            <TextBlock Grid.Column="0" Text="手动:" VerticalAlignment="Center" FontWeight="Bold" Foreground="#555" Margin="0,0,8,0"/>
-                            <TextBox Grid.Column="1" Text="{Binding ManualCode}" Watermark="输入票码" Margin="0,0,8,0" Height="36" VerticalContentAlignment="Center"/>
-                            <Button Grid.Column="2" Content="检票" Command="{Binding ManualCheckCommand}" Height="36" 
-                                    VerticalContentAlignment="Center"
-                                    Background="#018786" Foreground="White" CornerRadius="6" FontWeight="Bold" Padding="12,0"/>
+                            <TextBlock Grid.Column="0" Text="手动" FontWeight="Bold" FontSize="16" Foreground="#444" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <TextBox Grid.Column="1" Text="{Binding ManualCode}" Watermark="输入票码" Margin="0,0,10,0" Height="40" VerticalContentAlignment="Center"/>
+                            <Button Grid.Column="2" Content="检票" Command="{Binding ManualCheckCommand}" Height="40" Width="85"
+                                    VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                                    Background="#018786" Foreground="White" CornerRadius="6" FontWeight="Bold"/>
                         </Grid>
                     </Border>
                 </StackPanel>
