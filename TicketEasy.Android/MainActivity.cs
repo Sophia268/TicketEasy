@@ -22,7 +22,7 @@ public class MainActivity : AvaloniaMainActivity<App>
         try
         {
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            ZXing.Mobile.MobileBarcodeScanner.Initialize(Application);
+            // ZXing.Mobile.MobileBarcodeScanner.Initialize(Application); // Obsolete: Use Xamarin.Essentials.Platform.Init instead
             App.Scanner = new AndroidTicketScanner();
             App.UrlLauncher = (url) =>
             {
