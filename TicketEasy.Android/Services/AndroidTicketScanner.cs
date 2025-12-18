@@ -67,7 +67,8 @@ public class AndroidTicketScanner : ITicketScanner
         catch (System.Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"ScanImageAsync Error: {ex}");
-            return null;
+            // Return specific error message if possible to help debug on UI
+            return $"Error: {ex.Message}";
         }
     }
 }
