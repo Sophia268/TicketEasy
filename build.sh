@@ -199,12 +199,18 @@ run_android() {
     fi
 
     # Get AVD
-    AVD_NAME=$("$EMULATOR_PATH" -list-avds | head -n 1)
+    echo "Available AVDs:"
+    AVD_LIST=$("$EMULATOR_PATH" -list-avds)
+    echo "$AVD_LIST"
+
+    AVD_NAME=$(echo "$AVD_LIST" | head -n 1 | tr -d '\r')
     
     if [ -z "$AVD_NAME" ]; then
         echo "No AVD found. Please create one in Android Device Manager."
         exit 1
     fi
+
+    echo "Selected AVD: $AVD_NAME"
 
     # Check if emulator is already running (via ADB)
     DEVICE_ID=$("$ADB_PATH" devices | grep "emulator-" | head -n 1 | awk '{print $1}')

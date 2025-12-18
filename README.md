@@ -68,7 +68,7 @@ TicketEasy/
 - 必备：
   - [.NET 10 SDK](https://dotnet.microsoft.com/download)
   - JDK 17
-  - Android SDK（含 `platform-tools`、`build-tools`、`Android 13 (API 33)+` 平台）
+  - Android SDK（含 `platform-tools`、`build-tools`、`Android 16 (API 36)+` 平台）
   - 至少一个可用的 Android AVD（模拟器）
 
 ### Android 构建与调试 / Android Build & Run

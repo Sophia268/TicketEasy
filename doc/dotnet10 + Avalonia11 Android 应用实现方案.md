@@ -98,10 +98,10 @@
 
 - 安装 Android Studio（用于 SDK 管理与模拟器管理）。
 - 安装以下组件：
-  - Android SDK Platform（目标 API 级别，如 34）
+  - Android SDK Platform（目标 API 级别，如 36）
   - Android SDK Build-Tools
   - Android Emulator
-  - 相应的系统镜像（如：Android 13/14 x86_64）
+  - 相应的系统镜像（如：Android 16 x86_64）
 - 配置环境变量（Windows 示例）：
   - `ANDROID_SDK_ROOT` 指向 Android SDK 根目录
   - 将 `platform-tools`（包含 `adb`）加入 `PATH`
