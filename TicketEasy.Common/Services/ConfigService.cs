@@ -73,9 +73,13 @@ public class ConfigService
         }
     }
 
-    public async Task SaveConfigAsync(string productId)
+    public async Task SaveConfigAsync(string productId, string productHashcode = "")
     {
         CurrentConfig.ProductId = productId;
+        if (!string.IsNullOrEmpty(productHashcode))
+        {
+            CurrentConfig.ProductHashcode = productHashcode;
+        }
         await SaveConfigInternalAsync();
     }
 

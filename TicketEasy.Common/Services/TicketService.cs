@@ -25,7 +25,7 @@ public class TicketService
         return url.EndsWith("/") ? url.TrimEnd('/') : url;
     }
 
-    public async Task<bool> CheckConnectivityAsync(string productId)
+    public async Task<ApiResponse<ProductMsg>?> CheckConnectivityAsync(string productId)
     {
         try
         {
@@ -40,15 +40,13 @@ public class TicketService
             {
                 var json = await response.Content.ReadAsStringAsync();
                 var apiResp = JsonSerializer.Deserialize<ApiResponse<ProductMsg>>(json);
-
-                // Code 200 means Product Exists
-                return apiResp?.Code == 200 && apiResp?.Status == "ok";
+                return apiResp;
             }
-            return false;
+            return null;
         }
         catch
         {
-            return false;
+            return null;
         }
     }
 

@@ -87,19 +87,27 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
         AddLog($"Connecting with Product ID: {ProductId}...");
-        bool result = await _ticketService.CheckConnectivityAsync(ProductId);
+        var response = await _ticketService.CheckConnectivityAsync(ProductId);
 
-        if (result)
+        if (response != null && response.Status == "ok" && response.Code == 200)
         {
             IsConnected = true;
             AddLog("Connected successfully.");
-            // Save ProductId to config for next run
-            await _configService.SaveConfigAsync(ProductId);
+
+            string hash = response.Msg?.ProductHashcode ?? "";
+            if (!string.IsNullOrEmpty(hash))
+            {
+                AddLog($"Got Product Hash: {hash}");
+            }
+
+            // Save ProductId and HashCode to config for next run
+            await _configService.SaveConfigAsync(ProductId, hash);
         }
         else
         {
             IsConnected = false;
-            AddLog("Connection failed. Please check Product ID and network.");
+            string errMsg = response?.Msg?.Error ?? response?.Msg?.Message ?? "Unknown Error";
+            AddLog($"Connection failed. Code: {response?.Code}. Msg: {errMsg}");
         }
     }
 
@@ -275,11 +283,21 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private void OpenPurchaseLink()
     {
-        var baseUrl = _configService.CurrentConfig.BaseUrl;
+        var config = _configService.CurrentConfig;
+        var hash = config.ProductHashcode;
+
+        if (string.IsNullOrEmpty(hash))
+        {
+            AddLog("Error: No valid product link info. Please enter ProductID and Connect first.");
+            // Optionally show a dialog if possible, but Log is safer for now.
+            return;
+        }
+
+        var baseUrl = config.BaseUrl;
         if (baseUrl.EndsWith("/")) baseUrl = baseUrl.TrimEnd('/');
 
-        // {BaseUrl}/Goods/{productId}
-        var url = $"{baseUrl}/Goods/{ProductId}";
+        // {BaseUrl}/Goods/{ProductHashcode}
+        var url = $"{baseUrl}/Goods/{hash}";
         OpenUrl(url);
     }
 

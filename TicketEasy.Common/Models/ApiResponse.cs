@@ -34,4 +34,7 @@ public class ProductMsg
     
     [JsonPropertyName("checkedat")]
     public string? CheckedAt { get; set; }
+
+    [JsonPropertyName("ProductHashcode")]
+    public string? ProductHashcode { get; set; }
 }
