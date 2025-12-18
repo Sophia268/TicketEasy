@@ -42,6 +42,15 @@
   <ItemGroup>
     <AndroidAotSkipAssembly Include="zxing.dll" />
     <AndroidAotSkipAssembly Include="System.Drawing.Common.dll" />
+    
+    <!-- Prevent Trimming of ZXing Assemblies -->
+    <TrimmerRootAssembly Include="ZXing.Net.Mobile" />
+    <TrimmerRootAssembly Include="ZXingNetMobile" />
+    <TrimmerRootAssembly Include="zxing.portable" />
+    <TrimmerRootAssembly Include="ZXing.Net" />
+    
+    <!-- Prevent Trimming of Xamarin.Essentials (used by ZXing and Scanner) -->
+    <TrimmerRootAssembly Include="Xamarin.Essentials" />
   </ItemGroup>
 
   <ItemGroup>
