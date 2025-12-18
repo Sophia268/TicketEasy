@@ -7,66 +7,131 @@
              x:Class="TicketEasy.Views.MainView"
              x:DataType="vm:MainWindowViewModel">
 
-    <Grid RowDefinitions="Auto, *" Margin="16">
+    <UserControl.Styles>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#6200EE"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="15,10"/>
+        </Style>
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="#03DAC6"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="CornerRadius" Value="8"/>
+        </Style>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="BoxShadow" Value="0 2 4 0 #20000000"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+            <Setter Property="Padding" Value="16"/>
+        </Style>
+        <!-- Result Text Styles -->
+        <Style Selector="TextBlock.resultOk">
+            <Setter Property="Foreground" Value="#4CAF50"/>
+        </Style>
+        <Style Selector="TextBlock.resultFail">
+            <Setter Property="Foreground" Value="#F44336"/>
+        </Style>
+        <!-- Connect Button Styles -->
+        <Style Selector="Button.connected">
+            <Setter Property="Background" Value="#4CAF50"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto, *, Auto" Margin="16" Background="#FAFAFA">
         
         <!-- Header -->
-        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,16">
-            <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="TicketEasy" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding AppVersion, StringFormat='v{0}'}" VerticalAlignment="Bottom" Foreground="Gray"/>
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                <TextBlock Text="TicketEasy" FontSize="26" FontWeight="Bold" Foreground="#333333"/>
+                <TextBlock Text="{Binding AppVersion, StringFormat='v{0}'}" VerticalAlignment="Bottom" Foreground="#757575" FontSize="14"/>
             </StackPanel>
-            <Button Grid.Column="1" Content="About" Command="{Binding ToggleAboutCommand}"/>
         </Grid>
 
         <!-- Main Content -->
         <ScrollViewer Grid.Row="1" IsVisible="{Binding !ShowAbout}">
-            <StackPanel Spacing="20">
+            <StackPanel>
                 
                 <!-- Product & Connect -->
-                <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12">
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Product Configuration" FontWeight="SemiBold"/>
-                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto">
-                            <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding ProductId}" Watermark="Product ID" Margin="0,0,8,0"/>
-                            <Button Grid.Row="0" Grid.Column="1" Content="Connect" Command="{Binding ConnectCommand}"/>
+                <Border Classes="card">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Configuration" FontWeight="Bold" FontSize="16" Foreground="#444"/>
+                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto">
+                            <TextBox Grid.Column="0" Text="{Binding ProductId}" Watermark="Product ID" Margin="0,0,10,0" Height="40" VerticalContentAlignment="Center"/>
+                            <Button Grid.Column="1" Content="{Binding IsConnected, Converter={x:Static ObjectConverters.IsNull}}" 
+                                    Command="{Binding ConnectCommand}"
+                                    Classes.connected="{Binding IsConnected}"
+                                    Height="40" Width="100" HorizontalContentAlignment="Center">
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="12,0">
+                                            <TextBlock Text="{Binding IsConnected, Converter={x:Static ObjectConverters.IsNull}}" 
+                                                       Foreground="{TemplateBinding Foreground}"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <Panel>
+                                    <TextBlock Text="Connect" IsVisible="{Binding !IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Connected" IsVisible="{Binding IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Panel>
+                            </Button>
                         </Grid>
                     </StackPanel>
                 </Border>
 
                 <!-- Scan Action -->
-                <Button Content="Scan QR Code" Command="{Binding ScanCommand}" 
-                        HorizontalAlignment="Stretch" Height="60" FontSize="18" FontWeight="Bold"
-                        CornerRadius="8"/>
+                <Button Command="{Binding ScanCommand}" 
+                        HorizontalAlignment="Stretch" Height="80" 
+                        CornerRadius="16" Margin="0,0,0,20"
+                        Background="#6200EE" Foreground="White">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                        <!-- Simple Icon Representation -->
+                        <PathIcon Data="M4,4h6v6h-6zM14,4h6v6h-6zM4,14h6v6h-6zM16,16h2v2h-2zM14,18h2v2h-2zM18,14h2v2h-2z" 
+                                  Foreground="White" Height="24" Width="24"/>
+                        <TextBlock Text="Scan QR Code" FontSize="20" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
 
                 <!-- Manual Check -->
-                <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12">
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Manual Check" FontWeight="SemiBold"/>
+                <Border Classes="card">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Manual Check" FontWeight="Bold" FontSize="16" Foreground="#444"/>
                         <Grid ColumnDefinitions="*, Auto">
-                            <TextBox Grid.Column="0" Text="{Binding ManualCode}" Watermark="Enter Ticket Code" Margin="0,0,8,0"/>
-                            <Button Grid.Column="1" Content="Check" Command="{Binding ManualCheckCommand}"/>
+                            <TextBox Grid.Column="0" Text="{Binding ManualCode}" Watermark="Enter Ticket Code" Margin="0,0,10,0" Height="40" VerticalContentAlignment="Center"/>
+                            <Button Grid.Column="1" Content="Check" Command="{Binding ManualCheckCommand}" Height="40" Width="80" 
+                                    HorizontalContentAlignment="Center" Background="#018786" Foreground="White" CornerRadius="6" FontWeight="Bold"/>
                         </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Result Display Area -->
+                <Border Classes="card" Background="#FFFFFF" BorderBrush="#EEEEEE" BorderThickness="1">
+                    <StackPanel Spacing="5" HorizontalAlignment="Center">
+                        <TextBlock Text="Validation Result" FontSize="14" Foreground="#999" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding ResultText}" 
+                                   Classes.resultOk="{Binding IsResultOk}"
+                                   Classes.resultFail="{Binding !IsResultOk}"
+                                   FontSize="24" FontWeight="Black" 
+                                   HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"/>
                     </StackPanel>
                 </Border>
 
                 <!-- Logs -->
-                <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12">
-                    <StackPanel Spacing="5">
-                        <TextBlock Text="Activity Log" FontWeight="SemiBold"/>
-                        <ListBox ItemsSource="{Binding Logs}" Height="200" Background="#F5F5F5" BorderThickness="0" CornerRadius="4">
+                <Border Classes="card">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Activity Log" FontWeight="Bold" FontSize="16" Foreground="#444"/>
+                        <ListBox ItemsSource="{Binding Logs}" Height="150" Background="#F5F5F5" BorderThickness="0" CornerRadius="8">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="12" Margin="2"/>
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="12" Margin="0,2" Foreground="#666" FontFamily="Consolas, Monospace"/>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
                     </StackPanel>
                 </Border>
-                
-                <!-- Purchase Link -->
-                <Button Content="Buy Ticket / 购票链接" Command="{Binding OpenPurchaseLinkCommand}" 
-                        HorizontalAlignment="Center" Background="Transparent" Foreground="{DynamicResource SystemAccentColor}"
-                        BorderThickness="0"/>
 
             </StackPanel>
         </ScrollViewer>
@@ -83,6 +148,15 @@
                 <Button Content="Close" Command="{Binding ToggleAboutCommand}" HorizontalAlignment="Center"/>
             </StackPanel>
         </ScrollViewer>
+
+        <!-- Bottom Actions -->
+        <Grid Grid.Row="2" ColumnDefinitions="*, *" Margin="0,10,0,0">
+             <Button Grid.Column="0" Content="About" Command="{Binding ToggleAboutCommand}" 
+                     HorizontalAlignment="Center" Background="Transparent" Foreground="#757575"/>
+             
+             <Button Grid.Column="1" Content="Buy Ticket" Command="{Binding OpenPurchaseLinkCommand}" 
+                     HorizontalAlignment="Center" Background="Transparent" Foreground="#6200EE" FontWeight="Bold"/>
+        </Grid>
 
     </Grid>
 </UserControl>

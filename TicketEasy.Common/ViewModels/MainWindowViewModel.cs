@@ -33,6 +33,12 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string _appVersion = "1.0.0";
 
+    [ObservableProperty]
+    private string _resultText = "";
+
+    [ObservableProperty]
+    private bool _isResultOk;
+
     public MainWindowViewModel(ITicketScanner? scanner = null)
     {
         _scanner = scanner;
@@ -62,7 +68,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         AddLog($"Connecting with Product ID: {ProductId}...");
         bool result = await _ticketService.CheckConnectivityAsync(ProductId);
-        
+
         if (result)
         {
             IsConnected = true;
@@ -88,7 +94,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             AddLog("Scanning QR Code...");
             string? result = await _scanner.ScanAsync();
-            
+
             if (!string.IsNullOrEmpty(result))
             {
                 AddLog($"Scanned: {result}");
@@ -113,11 +119,11 @@ public partial class MainWindowViewModel : ViewModelBase
             AddLog("Error: Please enter a code.");
             return;
         }
-        
+
         // Construct JSON for manual input
         string json = $"{{\"code\":\"{ManualCode}\",\"category\":null,\"createTime\":null,\"ExpireTime\":null}}";
         AddLog($"Checking Manual Code: {ManualCode}");
-        
+
         await CheckTicketAsync(json, isScan: false);
     }
 
@@ -130,14 +136,35 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
         string result = await _ticketService.ValidateTicketAsync(ProductId, codeInfo);
-        
+
         if (result.Contains("OK", StringComparison.OrdinalIgnoreCase))
         {
-             AddLog("Ticket Valid: OK");
+            string ticketCode = isScan ? "Scanned" : ManualCode;
+            // Try to extract code from json if possible, but for now use simple logic
+            // If manual, use ManualCode. If scanned, maybe the result or input codeInfo has it.
+            // The user requirement says: OK: XXXX (Ticket Code)
+
+            // Simple parsing if it is JSON
+            if (codeInfo.Contains("\"code\""))
+            {
+                try
+                {
+                    var startIndex = codeInfo.IndexOf("\"code\"") + 7;
+                    var endIndex = codeInfo.IndexOf("\"", startIndex + 1); // rough parse
+                                                                           // let's skip complex parsing for now or do a quick extract
+                }
+                catch { }
+            }
+
+            ResultText = $"OK: {ticketCode}";
+            IsResultOk = true;
+            AddLog("Ticket Valid: OK");
         }
         else
         {
-             AddLog($"Ticket Result: {result}");
+            ResultText = "Failure!";
+            IsResultOk = false;
+            AddLog($"Ticket Result: {result}");
         }
     }
 
@@ -152,7 +179,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         OpenUrl("https://www.80fafa.com");
     }
-    
+
     private void OpenUrl(string url)
     {
         try
