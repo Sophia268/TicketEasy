@@ -86,28 +86,30 @@
                 <StackPanel Grid.Row="1" Spacing="16" Margin="0,0,0,16" IsEnabled="{Binding IsConnected}">
                     
                     <!-- Scan Buttons -->
-                    <Grid ColumnDefinitions="Auto, *, Auto">
-                        <TextBlock Grid.Column="0" Text="扫码" FontWeight="Bold" FontSize="16" Foreground="#444" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                        <Button Grid.Column="1" Command="{Binding ScanCommand}" 
-                                HorizontalAlignment="Stretch" Height="60" 
-                                CornerRadius="12" Margin="0,0,10,0"
-                                Background="#6200EE" Foreground="White">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
-                                <PathIcon Data="M4,4h6v6h-6zM14,4h6v6h-6zM4,14h6v6h-6zM16,16h2v2h-2zM14,18h2v2h-2zM18,14h2v2h-2z" 
-                                          Foreground="White" Height="24" Width="24"/>
-                                <TextBlock Text="扫描二维码" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-                        
-                        <Button Grid.Column="2" Command="{Binding ScanImageCommand}"
-                                Height="60" Width="85"
-                                CornerRadius="12"
-                                Background="#3700B3" Foreground="White"
-                                ToolTip.Tip="从相册选择">
-                             <PathIcon Data="M21,19V5c0-1.1-0.9-2-2-2H5c-1.1,0-2,0.9-2,2v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2z M8.5,13.5l2.5,3.01L14.5,12l4.5,6H5l3.5-4.5z" 
-                                       Foreground="White" Height="24" Width="24"/>
-                        </Button>
-                    </Grid>
+                    <Border Classes="card" Margin="0">
+                        <Grid ColumnDefinitions="Auto, *, Auto">
+                            <TextBlock Grid.Column="0" Text="扫码" FontWeight="Bold" FontSize="16" Foreground="#444" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <Button Grid.Column="1" Command="{Binding ScanCommand}" 
+                                    HorizontalAlignment="Stretch" Height="40" 
+                                    CornerRadius="6" Margin="0,0,10,0"
+                                    Background="#6200EE" Foreground="White">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                                    <PathIcon Data="M4,4h6v6h-6zM14,4h6v6h-6zM4,14h6v6h-6zM16,16h2v2h-2zM14,18h2v2h-2zM18,14h2v2h-2z" 
+                                              Foreground="White" Height="20" Width="20"/>
+                                    <TextBlock Text="扫描二维码" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            
+                            <Button Grid.Column="2" Command="{Binding ScanImageCommand}"
+                                    Height="40" Width="85"
+                                    CornerRadius="6"
+                                    Background="#3700B3" Foreground="White"
+                                    ToolTip.Tip="从相册选择">
+                                 <PathIcon Data="M21,19V5c0-1.1-0.9-2-2-2H5c-1.1,0-2,0.9-2,2v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2z M8.5,13.5l2.5,3.01L14.5,12l4.5,6H5l3.5-4.5z" 
+                                           Foreground="White" Height="20" Width="20"/>
+                            </Button>
+                        </Grid>
+                    </Border>
 
                     <!-- Manual Input (Compact) -->
                     <Border Classes="card" Margin="0">
