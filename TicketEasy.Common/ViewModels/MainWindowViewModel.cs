@@ -42,6 +42,9 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isResultOk;
 
+    [ObservableProperty]
+    private bool _isSettingsOpen;
+
     public MainWindowViewModel(ITicketScanner? scanner = null)
     {
         _scanner = scanner;
@@ -278,6 +281,12 @@ public partial class MainWindowViewModel : ViewModelBase
     private void ToggleAbout()
     {
         ShowAbout = !ShowAbout;
+    }
+
+    [RelayCommand]
+    private void ToggleSettings()
+    {
+        IsSettingsOpen = !IsSettingsOpen;
     }
 
     [RelayCommand]
