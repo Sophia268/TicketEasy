@@ -12,6 +12,7 @@ namespace TicketEasy;
 public partial class App : Application
 {
     public static ITicketScanner? Scanner { get; set; }
+    public static Action<string>? UrlLauncher { get; set; }
 
     public override void Initialize()
     {

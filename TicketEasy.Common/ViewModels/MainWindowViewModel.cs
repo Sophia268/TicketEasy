@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using System.Text.Json;
 
 namespace TicketEasy.ViewModels;
 
@@ -156,36 +157,112 @@ public partial class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        string result = await _ticketService.ValidateTicketAsync(ProductId, codeInfo);
-
-        if (result.Contains("OK", StringComparison.OrdinalIgnoreCase))
+        // Extract raw code if needed
+        string rawCode = codeInfo;
+        if (isScan && codeInfo.Trim().StartsWith("{") && codeInfo.Contains("\"code\""))
         {
-            string ticketCode = isScan ? "Scanned" : ManualCode;
-            // Try to extract code from json if possible, but for now use simple logic
-            // If manual, use ManualCode. If scanned, maybe the result or input codeInfo has it.
-            // The user requirement says: OK: XXXX (Ticket Code)
-
-            // Simple parsing if it is JSON
-            if (codeInfo.Contains("\"code\""))
+            try
             {
-                try
-                {
-                    var startIndex = codeInfo.IndexOf("\"code\"") + 7;
-                    var endIndex = codeInfo.IndexOf("\"", startIndex + 1); // rough parse
-                    // let's skip complex parsing for now or do a quick extract
-                }
-                catch { }
-            }
+                // Simple extraction or use JSON parser. Let's try to extract "code" value.
+                // Or if the backend expects the raw code, we need to extract it.
+                // The prompt implies the QR is JSON: {"code":"xxxx",...}
+                // But the API call {code} parameter expects just the code string.
+                // So we MUST extract the code from the JSON.
 
-            ResultText = $"OK: {ticketCode}";
-            IsResultOk = true;
-            AddLog("Ticket Valid: OK");
+                using (JsonDocument doc = JsonDocument.Parse(codeInfo))
+                {
+                    if (doc.RootElement.TryGetProperty("code", out JsonElement codeElement))
+                    {
+                        rawCode = codeElement.GetString() ?? "";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                AddLog($"Warning: Failed to parse QR JSON: {ex.Message}. Using raw string.");
+            }
+        }
+        else if (!isScan && codeInfo.Trim().StartsWith("{"))
+        {
+            // For ManualCheckAsync we constructed a JSON string:
+            // $"{{\"code\":\"{ManualCode}\",...}}"
+            // So we should also extract it, OR just use ManualCode directly in the first place.
+            // But to keep consistent with the method signature, let's extract or better yet, fix the caller.
+            // Actually, the caller ManualCheckAsync passes a JSON string.
+            // Let's parse it back to get the code, or just rely on ManualCode property if available?
+            // Since we have ManualCode property, let's just use rawCode = ManualCode if !isScan?
+            // But let's be robust and parse if it looks like JSON.
+
+            try
+            {
+                using (JsonDocument doc = JsonDocument.Parse(codeInfo))
+                {
+                    if (doc.RootElement.TryGetProperty("code", out JsonElement codeElement))
+                    {
+                        rawCode = codeElement.GetString() ?? "";
+                    }
+                }
+            }
+            catch { }
+        }
+
+        if (string.IsNullOrWhiteSpace(rawCode))
+        {
+            AddLog("Error: Could not extract code from input.");
+            return;
+        }
+
+        var result = await _ticketService.ValidateTicketAsync(ProductId, rawCode);
+
+        if (result == null)
+        {
+            ResultText = "Error";
+            IsResultOk = false;
+            AddLog("Network Error or Unknown Response");
+            return;
+        }
+
+        if (result.Status == "ok")
+        {
+            if (result.Code == 200)
+            {
+                // Success
+                ResultText = $"OK: {rawCode}";
+                IsResultOk = true;
+                AddLog($"Ticket Valid: {rawCode}");
+                if (result.Msg?.CheckedAt != null)
+                {
+                    AddLog($"Checked At: {result.Msg.CheckedAt}");
+                }
+            }
+            else if (result.Code == 600)
+            {
+                // Already Used
+                ResultText = "USED";
+                IsResultOk = false;
+                AddLog($"Ticket Used! Code: {rawCode}");
+            }
+            else if (result.Code == 500)
+            {
+                // Expired
+                ResultText = "EXPIRED";
+                IsResultOk = false;
+                AddLog($"Ticket Expired! Code: {rawCode}");
+            }
+            else
+            {
+                // Other OK status?
+                ResultText = $"Status: {result.Code}";
+                IsResultOk = false;
+                AddLog($"Status {result.Code}: {result.Msg?.Message ?? "Unknown"}");
+            }
         }
         else
         {
-            ResultText = "Failure!";
+            // Error status
+            ResultText = "Failure";
             IsResultOk = false;
-            AddLog($"Ticket Result: {result}");
+            AddLog($"Error {result.Code}: {result.Msg?.Error ?? result.Msg?.Message ?? "Unknown Error"}");
         }
     }
 
@@ -208,6 +285,14 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void OpenUrl(string url)
     {
+        // 1. Try to use the injected platform-specific launcher (e.g., Android Intent)
+        if (App.UrlLauncher != null)
+        {
+            App.UrlLauncher.Invoke(url);
+            return;
+        }
+
+        // 2. Fallback to Process.Start for Desktop (Windows/Linux/macOS)
         try
         {
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });

@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TicketEasy.Models;
+using Avalonia.Platform;
 
 namespace TicketEasy.Services;
 
@@ -10,7 +11,10 @@ public class ConfigService
 {
     private const string ConfigFileName = "config.json";
     private readonly string _writablePath;
-    private readonly string _bundledPath;
+
+    // Resource URI for Avalonia AssetLoader
+    // Format: avares://Assembly.Name/Path/To/Resource
+    private readonly Uri _resourceUri = new Uri("avares://TicketEasy.Common/config.json");
 
     public AppConfig CurrentConfig { get; private set; } = new();
 
@@ -18,9 +22,6 @@ public class ConfigService
     {
         string personalFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
         _writablePath = Path.Combine(personalFolder, ConfigFileName);
-        
-        // For bundled path, we look in the base directory
-        _bundledPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigFileName);
     }
 
     public async Task LoadConfigAsync()
@@ -30,33 +31,40 @@ public class ConfigService
             // 1. Try to load from writable location (user modified)
             if (File.Exists(_writablePath))
             {
-                string json = await File.ReadAllTextAsync(_writablePath);
-                var config = JsonSerializer.Deserialize<AppConfig>(json);
-                if (config != null)
+                try
                 {
-                    CurrentConfig = config;
-                    return;
+                    string json = await File.ReadAllTextAsync(_writablePath);
+                    var config = JsonSerializer.Deserialize<AppConfig>(json);
+                    if (config != null)
+                    {
+                        CurrentConfig = config;
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to load writable config: {ex.Message}");
                 }
             }
 
-            // 2. Try to load from bundled location (initial)
-            if (File.Exists(_bundledPath))
+            // 2. Try to load from embedded Avalonia Resource (initial default)
+            if (AssetLoader.Exists(_resourceUri))
             {
-                string json = await File.ReadAllTextAsync(_bundledPath);
+                using var stream = AssetLoader.Open(_resourceUri);
+                using var reader = new StreamReader(stream);
+                string json = await reader.ReadToEndAsync();
+
                 var config = JsonSerializer.Deserialize<AppConfig>(json);
                 if (config != null)
                 {
                     CurrentConfig = config;
                     // Copy to writable path for future updates
-                    await SaveConfigInternalAsync(); 
+                    await SaveConfigInternalAsync();
                 }
             }
             else
             {
-                // If neither exists, we might be in an environment where direct file access to bundle isn't allowed (like raw Assets in Android)
-                // But since we used CopyToOutputDirectory, it *should* be in the app directory.
-                // If not, we just use defaults.
-                System.Diagnostics.Debug.WriteLine($"Config not found at {_bundledPath}");
+                System.Diagnostics.Debug.WriteLine($"Config resource not found at {_resourceUri}");
             }
         }
         catch (Exception ex)

@@ -23,6 +23,19 @@ public class MainActivity : AvaloniaMainActivity<App>
         {
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             App.Scanner = new AndroidTicketScanner();
+            App.UrlLauncher = (url) =>
+            {
+                try
+                {
+                    var uri = Android.Net.Uri.Parse(url);
+                    var intent = new Android.Content.Intent(Android.Content.Intent.ActionView, uri);
+                    StartActivity(intent);
+                }
+                catch (System.Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error launching URL: {ex}");
+                }
+            };
 
             base.OnCreate(savedInstanceState);
         }

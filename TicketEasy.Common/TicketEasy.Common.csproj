@@ -16,13 +16,12 @@
   
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+    <AvaloniaResource Include="..\Resources\config.json">
+      <Link>config.json</Link>
+    </AvaloniaResource>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\Resources\config.json">
-      <Link>config.json</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="..\Resources\**" Exclude="..\Resources\config.json">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1,6 +1,8 @@
 using System;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
+using TicketEasy.Models;
 
 namespace TicketEasy.Services;
 
@@ -29,10 +31,20 @@ public class TicketService
         {
             string baseUrl = GetBaseUrl();
             // Connect: {BaseUrl}/api/verifyTicket/{productId}
+            // API Doc: Returns status="ok", code=200 if exists.
+
             string url = $"{baseUrl}/api/verifyTicket/{productId}";
             var response = await _httpClient.GetAsync(url);
-            
-            return response.IsSuccessStatusCode;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResp = JsonSerializer.Deserialize<ApiResponse<ProductMsg>>(json);
+
+                // Code 200 means Product Exists
+                return apiResp?.Code == 200 && apiResp?.Status == "ok";
+            }
+            return false;
         }
         catch
         {
@@ -40,7 +52,7 @@ public class TicketService
         }
     }
 
-    public async Task<string> ValidateTicketAsync(string productId, string? codeInfo)
+    public async Task<ApiResponse<ProductMsg>?> ValidateTicketAsync(string productId, string? codeInfo)
     {
         try
         {
@@ -49,30 +61,51 @@ public class TicketService
 
             if (string.IsNullOrEmpty(codeInfo))
             {
-                // Optional code
+                // Fallback to product check if code is empty, though caller should usually provide code for validation
                 url = $"{baseUrl}/api/verifyTicket/{productId}";
             }
             else
             {
                 // Check: {BaseUrl}/api/verifyTicket/{productId}/{code}
-                string encodedPayload = System.Net.WebUtility.UrlEncode(codeInfo);
-                url = $"{baseUrl}/api/verifyTicket/{productId}/{encodedPayload}";
+                // Note: codeInfo might need careful handling if it's JSON from QR vs plain string.
+                // The API expects just the code string in the URL path.
+                // If codeInfo is JSON (e.g. {"code":"..."}), we should extract it before calling this, 
+                // OR we assume codeInfo passed here is ALREADY the raw code.
+                // Based on previous context, we will assume codeInfo passed here is the raw code string.
+
+                string encodedCode = System.Net.WebUtility.UrlEncode(codeInfo);
+                url = $"{baseUrl}/api/verifyTicket/{productId}/{encodedCode}";
             }
-            
+
             var response = await _httpClient.GetAsync(url);
-            
-            if (response.IsSuccessStatusCode)
+            var json = await response.Content.ReadAsStringAsync();
+
+            // The API might return 404 or 400 with a JSON body, so we should try to parse JSON even if !IsSuccessStatusCode
+            // However, HttpClient.GetAsync doesn't throw on 404 unless EnsureSuccessStatusCode is called.
+
+            try
             {
-                return await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<ApiResponse<ProductMsg>>(json);
             }
-            else
+            catch
             {
-                return $"Error: {response.StatusCode}";
+                // If parsing fails (e.g. server error HTML), return a generic error wrapper
+                return new ApiResponse<ProductMsg>
+                {
+                    Status = "error",
+                    Code = (int)response.StatusCode,
+                    Msg = new ProductMsg { Error = $"Network/Parse Error: {response.StatusCode}" }
+                };
             }
         }
         catch (Exception ex)
         {
-            return $"Exception: {ex.Message}";
+            return new ApiResponse<ProductMsg>
+            {
+                Status = "error",
+                Code = 999,
+                Msg = new ProductMsg { Error = ex.Message }
+            };
         }
     }
 }
