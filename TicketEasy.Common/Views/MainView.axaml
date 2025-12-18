@@ -49,19 +49,17 @@
         <!-- Header -->
         <Grid Grid.Row="0" Margin="0,0,0,16">
             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
-                <TextBlock Text="TicketEasy" FontSize="26" FontWeight="Bold" Foreground="#333333"/>
+                <TextBlock Text="票易(TicketEasy)" FontSize="26" FontWeight="Bold" Foreground="#333333"/>
                 <TextBlock Text="{Binding AppVersion, StringFormat='v{0}'}" VerticalAlignment="Bottom" Foreground="#757575" FontSize="14"/>
             </StackPanel>
         </Grid>
 
         <!-- Main Content -->
-        <ScrollViewer Grid.Row="1" IsVisible="{Binding !ShowAbout}">
-            <StackPanel>
-                
+        <Grid Grid.Row="1" IsVisible="{Binding !ShowAbout}" RowDefinitions="Auto,Auto,Auto,Auto,*">
                 <!-- Product & Connect -->
-                <Border Classes="card">
+                <Border Grid.Row="0" Classes="card">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Configuration" FontWeight="Bold" FontSize="16" Foreground="#444"/>
+                        <TextBlock Text="配置" FontWeight="Bold" FontSize="16" Foreground="#444"/>
                         <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto">
                             <TextBox Grid.Column="0" Text="{Binding ProductId}" Watermark="Product ID" Margin="0,0,10,0" Height="40" VerticalContentAlignment="Center"/>
                             <Button Grid.Column="1"
@@ -71,31 +69,17 @@
                                     Height="40" Width="100" HorizontalContentAlignment="Center"
                                     CornerRadius="6">
                                 <Panel>
-                                    <TextBlock Text="Connect" IsVisible="{Binding !IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
-                                    <TextBlock Text="Connected" IsVisible="{Binding IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock Text="连接" IsVisible="{Binding !IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock Text="已连接" IsVisible="{Binding IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
                                 </Panel>
                             </Button>
                         </Grid>
                     </StackPanel>
-                </Border>
-
-                <!-- Scan Action -->
-                <Button Command="{Binding ScanCommand}" 
-                        HorizontalAlignment="Stretch" Height="80" 
-                        CornerRadius="16" Margin="0,0,0,20"
-                        Background="#6200EE" Foreground="White">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
-                        <!-- Simple Icon Representation -->
-                        <PathIcon Data="M4,4h6v6h-6zM14,4h6v6h-6zM4,14h6v6h-6zM16,16h2v2h-2zM14,18h2v2h-2zM18,14h2v2h-2z" 
-                                  Foreground="White" Height="24" Width="24"/>
-                        <TextBlock Text="Scan QR Code" FontSize="20" FontWeight="Bold" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-
+                </Border>            
                 <!-- Manual Check -->
-                <Border Classes="card">
+                <Border Grid.Row="1" Classes="card">
                     <StackPanel Spacing="12">
-                        <TextBlock Text="Manual Check" FontWeight="Bold" FontSize="16" Foreground="#444"/>
+                        <TextBlock Text="手动检票" FontWeight="Bold" FontSize="16" Foreground="#444"/>
                         <Grid ColumnDefinitions="*, Auto">
                             <TextBox Grid.Column="0" Text="{Binding ManualCode}" Watermark="Enter Ticket Code" Margin="0,0,10,0" Height="40" VerticalContentAlignment="Center"/>
                             <Button Grid.Column="1" Content="Check" Command="{Binding ManualCheckCommand}" Height="40" Width="80" 
@@ -103,9 +87,20 @@
                         </Grid>
                     </StackPanel>
                 </Border>
-                
+                <!-- Scan Action -->
+                <Button Grid.Row="2" Command="{Binding ScanCommand}" 
+                        HorizontalAlignment="Stretch" Height="60" 
+                        CornerRadius="16" Margin="0,0,0,20"
+                        Background="#6200EE" Foreground="White">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                        <!-- Simple Icon Representation -->
+                        <PathIcon Data="M4,4h6v6h-6zM14,4h6v6h-6zM4,14h6v6h-6zM16,16h2v2h-2zM14,18h2v2h-2zM18,14h2v2h-2z" 
+                                  Foreground="White" Height="24" Width="24"/>
+                        <TextBlock Text="扫描二维码" FontSize="20" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
                 <!-- Result Display Area -->
-                <Border Classes="card" Background="#FFFFFF" BorderBrush="#EEEEEE" BorderThickness="1">
+                <Border Grid.Row="3" Classes="card" Background="#FFFFFF" BorderBrush="#EEEEEE" BorderThickness="1">
                     <StackPanel Spacing="5" HorizontalAlignment="Center">
                         <TextBlock Text="Validation Result" FontSize="14" Foreground="#999" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding ResultText}" 
@@ -115,23 +110,20 @@
                                    HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"/>
                     </StackPanel>
                 </Border>
-
                 <!-- Logs -->
-                <Border Classes="card">
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Activity Log" FontWeight="Bold" FontSize="16" Foreground="#444"/>
-                        <ListBox ItemsSource="{Binding Logs}" Height="150" Background="#F5F5F5" BorderThickness="0" CornerRadius="8">
+                <Border Grid.Row="4" Classes="card">
+                    <Grid RowDefinitions="Auto, *">
+                        <TextBlock Grid.Row="0" Text="日志" FontWeight="Bold" FontSize="16" Foreground="#444" Margin="0,0,0,8"/>
+                        <ListBox Grid.Row="1" ItemsSource="{Binding Logs}" Background="#F5F5F5" BorderThickness="0" CornerRadius="8">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="12" Margin="0,2" Foreground="#666" FontFamily="Consolas, Monospace"/>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                    </StackPanel>
+                    </Grid>
                 </Border>
-
-            </StackPanel>
-        </ScrollViewer>
+        </Grid>
 
         <!-- About Content -->
         <ScrollViewer Grid.Row="1" IsVisible="{Binding ShowAbout}">
@@ -140,9 +132,9 @@
                 <TextBlock Text="{Binding AppVersion, StringFormat='Version {0}'}" HorizontalAlignment="Center" Foreground="Gray"/>
                 
                 <TextBlock TextWrapping="Wrap" TextAlignment="Center" MaxWidth="300"
-                           Text="A simple and efficient ticket verification tool. Connect with your product ID and start scanning."/>
-
-                <Button Content="Close" Command="{Binding ToggleAboutCommand}" HorizontalAlignment="Center"/>
+                           Text="这是一个简单而高效的票务验证工具。连接您的产品ID并开始扫描。"/>
+                
+                <Button Content="关闭" Command="{Binding ToggleAboutCommand}" HorizontalAlignment="Center"/>
             </StackPanel>
         </ScrollViewer>
 
@@ -168,7 +160,7 @@
                  <StackPanel Orientation="Horizontal" Spacing="8">
                      <PathIcon Data="M7,18c-1.1,0-1.99,0.9-1.99,2S5.9,22,7,22s2-0.9,2-2S8.1,18,7,18z M1,2v2h2l3.6,7.59l-1.35,2.45c-0.16,0.28-0.25,0.61-0.25,0.96c0,1.1,0.9,2,2,2h12v-2H7.42c-0.14,0-0.25-0.11-0.25-0.25l0.03-0.12l0.9-1.63h7.45c0.75,0,1.41-0.41,1.75-1.03l3.58-6.49c0.08-0.14,0.12-0.31,0.12-0.48c0-0.55-0.45-1-1-1H5.21l-0.94-2H1z M17,18c-1.1,0-1.99,0.9-1.99,2s0.89,2,1.99,2s2-0.9,2-2S18.1,18,17,18z"
                                Foreground="White" Width="20" Height="20"/>
-                     <TextBlock Text="Buy Ticket" FontWeight="Bold" VerticalAlignment="Center"/>
+                     <TextBlock Text="购票" FontWeight="Bold" VerticalAlignment="Center"/>
                  </StackPanel>
              </Button>
         </Grid>
