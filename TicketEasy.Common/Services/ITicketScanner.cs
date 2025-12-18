@@ -5,4 +5,5 @@ namespace TicketEasy.Services;
 public interface ITicketScanner
 {
     Task<string?> ScanAsync();
+    Task<string?> ScanImageAsync();
 }

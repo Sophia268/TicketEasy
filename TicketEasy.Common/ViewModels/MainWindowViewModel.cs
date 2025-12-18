@@ -142,6 +142,36 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private async Task ScanImageAsync()
+    {
+        if (_scanner == null)
+        {
+            AddLog("Error: Scanner not supported on this platform or not initialized.");
+            return;
+        }
+
+        try
+        {
+            AddLog("Picking Image...");
+            string? result = await _scanner.ScanImageAsync();
+
+            if (!string.IsNullOrEmpty(result))
+            {
+                AddLog($"Scanned from Image: {result}");
+                await CheckTicketAsync(result, isScan: true);
+            }
+            else
+            {
+                AddLog("Image scan canceled or empty.");
+            }
+        }
+        catch (Exception ex)
+        {
+            AddLog($"Image Scan Error: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
     private async Task ManualCheckAsync()
     {
         if (string.IsNullOrWhiteSpace(ManualCode))

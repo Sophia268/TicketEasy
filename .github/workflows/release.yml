@@ -61,6 +61,9 @@ jobs:
             -c Release \
             -f net10.0-android \
             -r android-arm64 \
+            -p:Version=${{ steps.get_version.outputs.VERSION }} \
+            -p:AssemblyVersion=${{ steps.get_version.outputs.VERSION }} \
+            -p:FileVersion=${{ steps.get_version.outputs.VERSION }} \
             -p:AndroidKeyStore=true \
             -p:AndroidSigningKeyStore=ci-release.keystore \
             -p:AndroidSigningStorePass=$ANDROID_KEYSTORE_PASSWORD \
