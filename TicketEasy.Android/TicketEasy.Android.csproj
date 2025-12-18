@@ -10,14 +10,14 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidKeyStore>True</AndroidKeyStore>
-    <AndroidSigningKeyStore>registrationeasy.keystore</AndroidSigningKeyStore>
+    <AndroidSigningKeyStore>TicketEasy.keystore</AndroidSigningKeyStore>
     <AndroidSigningStorePass>80fafa</AndroidSigningStorePass>
     <AndroidSigningKeyAlias>80fafa</AndroidSigningKeyAlias>
     <AndroidSigningKeyPass>80fafa</AndroidSigningKeyPass>
     <!-- Explicitly target arm64-v8a (and x86_64 for emulator) -->
     <RuntimeIdentifiers Condition="'$(Configuration)' == 'Debug'">android-arm64;android-x64</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="'$(Configuration)' == 'Release'">android-arm64</RuntimeIdentifiers>
-    <AssemblyName>RegistrationEasy.Android</AssemblyName>
+    <AssemblyName>TicketEasy.Android</AssemblyName>
     
     <!-- Disable Incremental Packaging for Release to prevent runtime crashes -->
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
@@ -38,6 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RegistrationEasy.Common\RegistrationEasy.Common.csproj" />
+    <ProjectReference Include="..\TicketEasy.Common\TicketEasy.Common.csproj" />
   </ItemGroup>
 </Project>

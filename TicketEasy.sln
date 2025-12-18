@@ -2,9 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegistrationEasy.Common", "RegistrationEasy.Common\RegistrationEasy.Common.csproj", "{1E0A4CDF-1180-4C82-A584-E940902077D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketEasy.Common", "TicketEasy.Common\TicketEasy.Common.csproj", "{1E0A4CDF-1180-4C82-A584-E940902077D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegistrationEasy.Android", "RegistrationEasy.Android\RegistrationEasy.Android.csproj", "{91410397-9F2C-4338-8EA9-56491E94935B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketEasy.Android", "TicketEasy.Android\TicketEasy.Android.csproj", "{91410397-9F2C-4338-8EA9-56491E94935B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

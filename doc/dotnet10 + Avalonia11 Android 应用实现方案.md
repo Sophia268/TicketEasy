@@ -1,6 +1,6 @@
 # dotnet10 + Avalonia11 Android 应用实现方案
 
-> 以 RegistrationEasy 项目为例的实践总结
+> 以 TicketEasy 项目为例的实践总结
 
 ---
 
@@ -115,16 +115,16 @@
 
 ## 3. 项目组织结构
 
-以 `RegistrationEasy` 为例的推荐结构：
+以 `TicketEasy` 为例的推荐结构：
 
 ```text
-RegistrationEasy/
-  RegistrationEasy.Common/      # 共享业务逻辑 + 视图 + ViewModel
-  RegistrationEasy.Android/     # Android 启动项目
+TicketEasy/
+  TicketEasy.Common/      # 共享业务逻辑 + 视图 + ViewModel
+  TicketEasy.Android/     # Android 启动项目
   build.sh                      # 统一构建与部署脚本（*nix/bash 环境）
 ```
 
-### 3.1 共享项目 `RegistrationEasy.Common`
+### 3.1 共享项目 `TicketEasy.Common`
 
 - 目标框架：`net10.0`
 - 主要职责：
@@ -135,14 +135,14 @@ RegistrationEasy/
 - 典型项目文件：
   - 引用 `Avalonia`, `Avalonia.Themes.Fluent`, `Avalonia.Fonts.Inter`, `CommunityToolkit.Mvvm`。
 
-### 3.2 Android 项目 `RegistrationEasy.Android`
+### 3.2 Android 项目 `TicketEasy.Android`
 
 - 目标框架：`net10.0-android`
 - 主要职责：
   - 提供 `MainActivity` 作为 Android 入口。
   - 调用 Avalonia Android 入口启动共享 `App`。
 - 依赖：
-  - 引用 `RegistrationEasy.Common`。
+  - 引用 `TicketEasy.Common`。
   - 引用 `Avalonia.Android`。
 
 ---
@@ -157,11 +157,11 @@ RegistrationEasy/
   ```
 - 构建 Android APK（Debug）：
   ```bash
-  dotnet build RegistrationEasy.Android -c Debug
+  dotnet build TicketEasy.Android -c Debug
   ```
 - 构建 Android APK（Release）：
   ```bash
-  dotnet build RegistrationEasy.Android -c Release
+  dotnet build TicketEasy.Android -c Release
   ```
 
 ---
@@ -196,7 +196,7 @@ RegistrationEasy/
 
 ### 6.2 Android 主题错误
 
-- 确保 `RegistrationEasy.Android/Resources/values/styles.xml` 使用兼容的 `Theme.AppCompat` 主题。
+- 确保 `TicketEasy.Android/Resources/values/styles.xml` 使用兼容的 `Theme.AppCompat` 主题。
 
 ---
 
@@ -219,7 +219,7 @@ RegistrationEasy/
 在项目根目录下打开终端（Git Bash 或 PowerShell），执行以下命令：
 
 ```bash
-keytool -genkey -v -keystore registrationeasy.keystore \
+keytool -genkey -v -keystore TicketEasy.keystore \
   -alias 80fafa \
   -keyalg RSA \
   -keysize 2048 \
@@ -230,22 +230,22 @@ keytool -genkey -v -keystore registrationeasy.keystore \
 >
 > - 执行过程中会提示输入密码（建议设置强密码），以及一些组织信息（可随意填写）。
 > - `-alias` 后面的 `80fafa` 是密钥别名，你可以修改，但需记住它。
-> - 生成后，你会得到一个 `registrationeasy.keystore` 文件。**请妥善保管，不要将其提交到 Git 仓库中！**
+> - 生成后，你会得到一个 `TicketEasy.keystore` 文件。**请妥善保管，不要将其提交到 Git 仓库中！**
 
 #### 2. 生成 Keystore 的 Base64 字符串
 
-GitHub Secrets 无法直接上传二进制文件，因此我们需要将 `registrationeasy.keystore` 转换为 Base64 字符串。
+GitHub Secrets 无法直接上传二进制文件，因此我们需要将 `TicketEasy.keystore` 转换为 Base64 字符串。
 
 **在 Git Bash / Linux / macOS 中：**
 
 ```bash
-base64 -w 0 registrationeasy.keystore > keystore.b64.txt
+base64 -w 0 TicketEasy.keystore > keystore.b64.txt
 ```
 
 **在 PowerShell 中：**
 
 ```powershell
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("registrationeasy.keystore")) | Out-File -Encoding utf8 keystore.b64.txt
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("TicketEasy.keystore")) | Out-File -Encoding utf8 keystore.b64.txt
 ```
 
 执行后，打开 `keystore.b64.txt`，复制其中的所有内容。

@@ -5,16 +5,16 @@
       "name": "C#: TicketEasy Debug",
       "type": "dotnet",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/RegistrationEasy.Android/RegistrationEasy.Android.csproj"
+      "projectPath": "${workspaceFolder}/TicketEasy.Android/TicketEasy.Android.csproj"
     },
     {
       "name": ".NET Core Launch (console)",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/RegistrationEasy.Android/bin/Debug/net10.0-android/RegistrationEasy.Android.dll",
+      "program": "${workspaceFolder}/TicketEasy.Android/bin/Debug/net10.0-android/TicketEasy.Android.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/RegistrationEasy.Android",
+      "cwd": "${workspaceFolder}/TicketEasy.Android",
       "console": "internalConsole",
       "stopAtEntry": false,
       "justMyCode": false

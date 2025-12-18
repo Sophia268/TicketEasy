@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - "v*"
-
 jobs:
   android:
     name: Build Android APK
@@ -49,8 +48,8 @@ jobs:
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
-          mkdir -p RegistrationEasy.Android
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > RegistrationEasy.Android/ci-release.keystore
+          mkdir -p TicketEasy.Android
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > TicketEasy.Android/ci-release.keystore
 
       - name: Publish signed Android APK
         env:
@@ -58,7 +57,7 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          dotnet publish RegistrationEasy.Android/RegistrationEasy.Android.csproj \
+          dotnet publish TicketEasy.Android/TicketEasy.Android.csproj \
             -c Release \
             -f net10.0-android \
             -p:AndroidKeyStore=true \
@@ -70,15 +69,15 @@ jobs:
       - name: Locate and rename APK
         shell: bash
         run: |
-          APK_PATH=$(find RegistrationEasy.Android/bin/Release -name "*-Signed.apk" | head -n 1)
+          APK_PATH=$(find TicketEasy.Android/bin/Release -name "*-Signed.apk" | head -n 1)
           if [ -z "$APK_PATH" ]; then
-            APK_PATH=$(find RegistrationEasy.Android/bin/Release -name "*.apk" | head -n 1)
+            APK_PATH=$(find TicketEasy.Android/bin/Release -name "*.apk" | head -n 1)
           fi
           if [ -z "$APK_PATH" ]; then
             echo "No APK found" >&2
             exit 1
           fi
-          APK_NAME="RegistrationEasy-Android-${{ steps.get_version.outputs.TAG_NAME }}.apk"
+          APK_NAME="TicketEasy-Android-${{ steps.get_version.outputs.TAG_NAME }}.apk"
           cp "$APK_PATH" "$APK_NAME"
 
       - name: Upload Android Artifact
@@ -133,7 +132,7 @@ jobs:
           # Delete existing 'latest' release and tag if they exist
           echo "Deleting old 'latest' release..."
           gh release delete latest --repo ${{ github.repository }} --cleanup-tag -y || echo "No existing 'latest' release to delete."
-          
+
           # Create new 'latest' release pointing to current commit
           echo "Creating new 'latest' release..."
           gh release create latest "$LATEST_APK" \

@@ -43,16 +43,16 @@
 解决方案采用“共享逻辑 + Android 壳”的结构：
 
 ```text
-RegistrationEasy/
-  RegistrationEasy.Common/      # 共享业务逻辑 + 视图 + ViewModel（核心部分）
-  RegistrationEasy.Android/     # Android 启动项目
+TicketEasy/
+  TicketEasy.Common/      # 共享业务逻辑 + 视图 + ViewModel（核心部分）
+  TicketEasy.Android/     # Android 启动项目
   build.sh                      # 本地一键构建与运行脚本（Git Bash / *nix）
 ```
 
-- `RegistrationEasy.Common`：
+- `TicketEasy.Common`：
   - 目标框架：`net10.0`
   - 包含机器码生成服务、注册码验证逻辑、视图和 ViewModel，是最值得直接复用的部分。
-- `RegistrationEasy.Android`：
+- `TicketEasy.Android`：
   - 目标框架：`net10.0-android`
   - 使用 `Avalonia.Android` 启动共享 `App`，提供 Android 应用入口（APK）。
 - `build.sh`：
@@ -80,7 +80,7 @@ RegistrationEasy/
 ./build.sh 2    # 启动模拟器（如未启动）并安装 / 运行应用
 ```
 
-APK 会生成在 `RegistrationEasy.Android/bin/Release/...` 下，具体路径可在脚本输出中看到。
+APK 会生成在 `TicketEasy.Android/bin/Release/...` 下，具体路径可在脚本输出中看到。
 
 ---
 

@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Configuration
-ANDROID_PROJECT="RegistrationEasy.Android/RegistrationEasy.Android.csproj"
-COMMON_PROJECT="RegistrationEasy.Common/RegistrationEasy.Common.csproj"
+ANDROID_PROJECT="TicketEasy.Android/TicketEasy.Android.csproj"
+COMMON_PROJECT="TicketEasy.Common/TicketEasy.Common.csproj"
 ANDROID_SDK_ROOT="D:\programfiles\Android\SDK"
 APP_ID="com.TicketEasy.app"
-KEYSTORE_PATH="RegistrationEasy.Android/registrationeasy.keystore"
+KEYSTORE_PATH="TicketEasy.Android/TicketEasy.keystore"
 KEY_ALIAS="80fafa"
 KEY_PASS="80fafa"
 
@@ -152,14 +152,14 @@ build_android() {
         echo "APK location:"
         
         # Find Signed APK
-        SIGNED_APK=$(find RegistrationEasy.Android/bin -name "*-Signed.apk" | head -n 1)
+        SIGNED_APK=$(find TicketEasy.Android/bin -name "*-Signed.apk" | head -n 1)
         if [ -z "$SIGNED_APK" ]; then
              # Try finding unsigned APK if signed one is not found
-             SIGNED_APK=$(find RegistrationEasy.Android/bin -name "*.apk" | head -n 1)
+             SIGNED_APK=$(find TicketEasy.Android/bin -name "*.apk" | head -n 1)
         fi
         
         if [ -z "$SIGNED_APK" ]; then
-             echo -e "${RED}APK not found in RegistrationEasy.Android/bin${NC}"
+             echo -e "${RED}APK not found in TicketEasy.Android/bin${NC}"
         else
              echo "$SIGNED_APK"
              
@@ -244,9 +244,9 @@ run_android() {
     if [ $? -ne 0 ]; then echo "Android Build Failed"; exit 1; fi
 
     # Find APK (Debug)
-    SIGNED_APK=$(find RegistrationEasy.Android/bin/Debug -name "*-Signed.apk" | head -n 1)
+    SIGNED_APK=$(find TicketEasy.Android/bin/Debug -name "*-Signed.apk" | head -n 1)
     if [ -z "$SIGNED_APK" ]; then
-         SIGNED_APK=$(find RegistrationEasy.Android/bin/Debug -name "*.apk" | head -n 1)
+         SIGNED_APK=$(find TicketEasy.Android/bin/Debug -name "*.apk" | head -n 1)
     fi
 
     if [ -z "$SIGNED_APK" ]; then
