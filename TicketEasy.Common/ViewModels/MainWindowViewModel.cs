@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 
 namespace TicketEasy.ViewModels;
 
@@ -14,6 +15,7 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly ITicketScanner? _scanner;
     private readonly TicketService _ticketService;
+    private readonly ConfigService _configService;
 
     [ObservableProperty]
     private string _productId = "";
@@ -42,9 +44,26 @@ public partial class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel(ITicketScanner? scanner = null)
     {
         _scanner = scanner;
-        _ticketService = new TicketService();
+        _configService = new ConfigService();
+        _ticketService = new TicketService(_configService);
+
         AppVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0";
         AddLog("Application Started.");
+
+        // Load Config asynchronously
+        Task.Run(async () => await InitializeConfigAsync());
+    }
+
+    private async Task InitializeConfigAsync()
+    {
+        await _configService.LoadConfigAsync();
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (!string.IsNullOrEmpty(_configService.CurrentConfig.ProductId))
+            {
+                ProductId = _configService.CurrentConfig.ProductId;
+            }
+        });
     }
 
     public MainWindowViewModel() : this(null) { }
@@ -73,6 +92,8 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             IsConnected = true;
             AddLog("Connected successfully.");
+            // Save ProductId to config for next run
+            await _configService.SaveConfigAsync(ProductId);
         }
         else
         {
@@ -151,7 +172,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 {
                     var startIndex = codeInfo.IndexOf("\"code\"") + 7;
                     var endIndex = codeInfo.IndexOf("\"", startIndex + 1); // rough parse
-                                                                           // let's skip complex parsing for now or do a quick extract
+                    // let's skip complex parsing for now or do a quick extract
                 }
                 catch { }
             }
@@ -177,7 +198,12 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private void OpenPurchaseLink()
     {
-        OpenUrl("https://www.80fafa.com");
+        var baseUrl = _configService.CurrentConfig.BaseUrl;
+        if (baseUrl.EndsWith("/")) baseUrl = baseUrl.TrimEnd('/');
+
+        // {BaseUrl}/Goods/{productId}
+        var url = $"{baseUrl}/Goods/{ProductId}";
+        OpenUrl(url);
     }
 
     private void OpenUrl(string url)

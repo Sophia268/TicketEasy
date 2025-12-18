@@ -60,22 +60,14 @@
                         <TextBlock Text="Configuration" FontWeight="Bold" FontSize="16" Foreground="#444"/>
                         <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto">
                             <TextBox Grid.Column="0" Text="{Binding ProductId}" Watermark="Product ID" Margin="0,0,10,0" Height="40" VerticalContentAlignment="Center"/>
-                            <Button Grid.Column="1" Content="{Binding IsConnected, Converter={x:Static ObjectConverters.IsNull}}" 
+                            <Button Grid.Column="1"
                                     Command="{Binding ConnectCommand}"
                                     Classes.connected="{Binding IsConnected}"
-                                    Height="40" Width="100" HorizontalContentAlignment="Center">
-                                <Button.Template>
-                                    <ControlTemplate>
-                                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="12,0">
-                                            <TextBlock Text="{Binding IsConnected, Converter={x:Static ObjectConverters.IsNull}}" 
-                                                       Foreground="{TemplateBinding Foreground}"
-                                                       HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Button.Template>
+                                    Height="40" Width="100" HorizontalContentAlignment="Center"
+                                    Background="Gray" Foreground="White" CornerRadius="6">
                                 <Panel>
-                                    <TextBlock Text="Connect" IsVisible="{Binding !IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Connected" IsVisible="{Binding IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Connect" IsVisible="{Binding !IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                                    <TextBlock Text="Connected" IsVisible="{Binding IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
                                 </Panel>
                             </Button>
                         </Grid>
