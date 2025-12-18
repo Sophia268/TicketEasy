@@ -29,6 +29,7 @@ public class MainActivity : AvaloniaMainActivity<App>
                 {
                     var uri = global::Android.Net.Uri.Parse(url);
                     var intent = new global::Android.Content.Intent(global::Android.Content.Intent.ActionView, uri);
+                    intent.AddFlags(global::Android.Content.ActivityFlags.NewTask);
                     StartActivity(intent);
                 }
                 catch (System.Exception ex)

@@ -74,7 +74,7 @@ public partial class MainWindowViewModel : ViewModelBase
         string logEntry = $"[{DateTime.Now:HH:mm:ss}] {message}";
         // Ensure UI update
         // Avalonia bindings usually handle ObservableCollection changes automatically
-        Logs.Insert(0, logEntry);
+        Dispatcher.UIThread.InvokeAsync(() => Logs.Insert(0, logEntry));
     }
 
     [RelayCommand]
@@ -94,7 +94,7 @@ public partial class MainWindowViewModel : ViewModelBase
             IsConnected = true;
             AddLog("Connected successfully.");
 
-            string hash = response.Msg?.ProductHashcode ?? "";
+            string hash = response.Data?.ProductHashcode ?? "";
             if (!string.IsNullOrEmpty(hash))
             {
                 AddLog($"Got Product Hash: {hash}");
@@ -106,7 +106,7 @@ public partial class MainWindowViewModel : ViewModelBase
         else
         {
             IsConnected = false;
-            string errMsg = response?.Msg?.Error ?? response?.Msg?.Message ?? "Unknown Error";
+            string errMsg = response?.Msg ?? "Unknown Error";
             AddLog($"Connection failed. Code: {response?.Code}. Msg: {errMsg}");
         }
     }
@@ -150,11 +150,10 @@ public partial class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        // Construct JSON for manual input
-        string json = $"{{\"code\":\"{ManualCode}\",\"category\":null,\"createTime\":null,\"ExpireTime\":null}}";
+        // The input is just the code
         AddLog($"Checking Manual Code: {ManualCode}");
 
-        await CheckTicketAsync(json, isScan: false);
+        await CheckTicketAsync(ManualCode, isScan: false);
     }
 
     private async Task CheckTicketAsync(string codeInfo, bool isScan)
@@ -171,12 +170,6 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             try
             {
-                // Simple extraction or use JSON parser. Let's try to extract "code" value.
-                // Or if the backend expects the raw code, we need to extract it.
-                // The prompt implies the QR is JSON: {"code":"xxxx",...}
-                // But the API call {code} parameter expects just the code string.
-                // So we MUST extract the code from the JSON.
-
                 using (JsonDocument doc = JsonDocument.Parse(codeInfo))
                 {
                     if (doc.RootElement.TryGetProperty("code", out JsonElement codeElement))
@@ -190,87 +183,57 @@ public partial class MainWindowViewModel : ViewModelBase
                 AddLog($"Warning: Failed to parse QR JSON: {ex.Message}. Using raw string.");
             }
         }
-        else if (!isScan && codeInfo.Trim().StartsWith("{"))
-        {
-            // For ManualCheckAsync we constructed a JSON string:
-            // $"{{\"code\":\"{ManualCode}\",...}}"
-            // So we should also extract it, OR just use ManualCode directly in the first place.
-            // But to keep consistent with the method signature, let's extract or better yet, fix the caller.
-            // Actually, the caller ManualCheckAsync passes a JSON string.
-            // Let's parse it back to get the code, or just rely on ManualCode property if available?
-            // Since we have ManualCode property, let's just use rawCode = ManualCode if !isScan?
-            // But let's be robust and parse if it looks like JSON.
 
-            try
-            {
-                using (JsonDocument doc = JsonDocument.Parse(codeInfo))
-                {
-                    if (doc.RootElement.TryGetProperty("code", out JsonElement codeElement))
-                    {
-                        rawCode = codeElement.GetString() ?? "";
-                    }
-                }
-            }
-            catch { }
-        }
-
-        if (string.IsNullOrWhiteSpace(rawCode))
-        {
-            AddLog("Error: Could not extract code from input.");
-            return;
-        }
-
+        // Validate Ticket
         var result = await _ticketService.ValidateTicketAsync(ProductId, rawCode);
 
         if (result == null)
         {
-            ResultText = "Error";
+            ResultText = "Network Error";
             IsResultOk = false;
-            AddLog("Network Error or Unknown Response");
+            AddLog("Ticket Result: Network or Parse Error");
             return;
         }
 
-        if (result.Status == "ok")
+        if (result.Status == "ok" && result.Code == 200)
         {
-            if (result.Code == 200)
-            {
-                // Success
-                ResultText = $"OK: {rawCode}";
-                IsResultOk = true;
-                AddLog($"Ticket Valid: {rawCode}");
-                if (result.Msg?.CheckedAt != null)
-                {
-                    AddLog($"Checked At: {result.Msg.CheckedAt}");
-                }
-            }
-            else if (result.Code == 600)
-            {
-                // Already Used
-                ResultText = "USED";
-                IsResultOk = false;
-                AddLog($"Ticket Used! Code: {rawCode}");
-            }
-            else if (result.Code == 500)
-            {
-                // Expired
-                ResultText = "EXPIRED";
-                IsResultOk = false;
-                AddLog($"Ticket Expired! Code: {rawCode}");
-            }
-            else
-            {
-                // Other OK status?
-                ResultText = $"Status: {result.Code}";
-                IsResultOk = false;
-                AddLog($"Status {result.Code}: {result.Msg?.Message ?? "Unknown"}");
-            }
+            // Success
+            string ticketCode = rawCode;
+            // If we have secret in response, maybe show it? But the requirement says OK: TicketCode
+            // Or maybe "OK: <Secret>"?
+            // The example response shows "Secret": "MY-SECRET-CODE" in data.
+
+            ResultText = $"OK: {ticketCode}";
+            IsResultOk = true;
+            AddLog($"Ticket Valid: OK. Type: {result.Data?.Category ?? "-"}");
+        }
+        else if (result.Code == 600)
+        {
+            // Already Used
+            ResultText = "Used / 已使用";
+            IsResultOk = false; // or maybe warning color? Requirement says Red for Fail, Green for OK. Used is technically a failure to validate as new.
+            AddLog($"Ticket Result: Already Used ({result.Msg})");
+        }
+        else if (result.Code == 500)
+        {
+            // Expired
+            ResultText = "Expired / 已过期";
+            IsResultOk = false;
+            AddLog($"Ticket Result: Expired ({result.Msg})");
+        }
+        else if (result.Code == 400 || result.Code == 404)
+        {
+            // Not found or error
+            ResultText = "Failure / 无效票";
+            IsResultOk = false;
+            AddLog($"Ticket Result: Invalid ({result.Code} - {result.Msg})");
         }
         else
         {
-            // Error status
-            ResultText = "Failure";
+            // Other error
+            ResultText = $"Error: {result.Code}";
             IsResultOk = false;
-            AddLog($"Error {result.Code}: {result.Msg?.Error ?? result.Msg?.Message ?? "Unknown Error"}");
+            AddLog($"Ticket Result: Error ({result.Code} - {result.Msg})");
         }
     }
 
@@ -283,34 +246,25 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private void OpenPurchaseLink()
     {
-        var config = _configService.CurrentConfig;
-        var hash = config.ProductHashcode;
+        var baseUrl = _configService.CurrentConfig.BaseUrl;
+        if (string.IsNullOrEmpty(baseUrl)) baseUrl = "https://www.80fafa.com";
+
+        var hash = _configService.CurrentConfig.ProductHashcode;
+
+        // Ensure no double slashes
+        baseUrl = baseUrl.TrimEnd('/');
+        var url = $"{baseUrl}/Goods/{hash}";
 
         if (string.IsNullOrEmpty(hash))
         {
-            AddLog("Error: No valid product link info. Please enter ProductID and Connect first.");
-            // Optionally show a dialog if possible, but Log is safer for now.
-            return;
+            AddLog("Warning: Product Hashcode is empty. Link might be invalid.");
         }
 
-        var baseUrl = config.BaseUrl;
-        if (baseUrl.EndsWith("/")) baseUrl = baseUrl.TrimEnd('/');
-
-        // {BaseUrl}/Goods/{ProductHashcode}
-        var url = $"{baseUrl}/Goods/{hash}";
         OpenUrl(url);
     }
 
     private void OpenUrl(string url)
     {
-        // 1. Try to use the injected platform-specific launcher (e.g., Android Intent)
-        if (App.UrlLauncher != null)
-        {
-            App.UrlLauncher.Invoke(url);
-            return;
-        }
-
-        // 2. Fallback to Process.Start for Desktop (Windows/Linux/macOS)
         try
         {
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });

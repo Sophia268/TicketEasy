@@ -34,6 +34,10 @@
             <Setter Property="Foreground" Value="#F44336"/>
         </Style>
         <!-- Connect Button Styles -->
+        <Style Selector="Button.connectBtn">
+            <Setter Property="Background" Value="Gray"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
         <Style Selector="Button.connected">
             <Setter Property="Background" Value="#4CAF50"/>
             <Setter Property="Foreground" Value="White"/>
@@ -62,9 +66,10 @@
                             <TextBox Grid.Column="0" Text="{Binding ProductId}" Watermark="Product ID" Margin="0,0,10,0" Height="40" VerticalContentAlignment="Center"/>
                             <Button Grid.Column="1"
                                     Command="{Binding ConnectCommand}"
+                                    Classes="connectBtn"
                                     Classes.connected="{Binding IsConnected}"
                                     Height="40" Width="100" HorizontalContentAlignment="Center"
-                                    Background="Gray" Foreground="White" CornerRadius="6">
+                                    CornerRadius="6">
                                 <Panel>
                                     <TextBlock Text="Connect" IsVisible="{Binding !IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
                                     <TextBlock Text="Connected" IsVisible="{Binding IsConnected}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
@@ -150,6 +155,7 @@
                      Padding="20,10"/>
              
              <Button Grid.Column="1" Command="{Binding OpenPurchaseLinkCommand}" 
+                     IsEnabled="{Binding IsConnected}"
                      HorizontalAlignment="Center" VerticalAlignment="Center"
                      Background="#FF9800" Foreground="White"
                      CornerRadius="8" Padding="20,10">
