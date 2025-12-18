@@ -87,7 +87,7 @@ public class ConfigService
     {
         try
         {
-            string json = JsonSerializer.Serialize(CurrentConfig, new JsonSerializerOptions { WriteIndented = true });
+            string json = JsonSerializer.Serialize(CurrentConfig, TicketJsonContext.Default.AppConfig);
             await File.WriteAllTextAsync(_writablePath, json);
         }
         catch (Exception ex)

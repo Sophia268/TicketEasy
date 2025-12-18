@@ -44,7 +44,7 @@ public class TicketService
 
             // Even if 404, the API returns a JSON body we want to parse
             var content = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<ApiResponse<TicketData>>(content, _jsonOptions);
+            return JsonSerializer.Deserialize(content, TicketJsonContext.Default.ApiResponseTicketData);
         }
         catch (Exception ex)
         {
@@ -93,7 +93,7 @@ public class TicketService
             var response = await _httpClient.GetAsync(url);
             var content = await response.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<ApiResponse<TicketData>>(content, _jsonOptions);
+            return JsonSerializer.Deserialize(content, TicketJsonContext.Default.ApiResponseTicketData);
         }
         catch (Exception ex)
         {
