@@ -85,7 +85,7 @@
                 </Border>
 
                 <!-- Combined Scan & Manual Check Area -->
-                <StackPanel Grid.Row="1" Spacing="16" Margin="0,0,0,16">
+                <StackPanel Grid.Row="1" Spacing="16" Margin="0,0,0,16" IsEnabled="{Binding IsConnected}">
                     
                     <!-- Scan Buttons -->
                     <Grid ColumnDefinitions="*, Auto">
