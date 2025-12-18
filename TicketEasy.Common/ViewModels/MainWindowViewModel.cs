@@ -166,15 +166,22 @@ public partial class MainWindowViewModel : ViewModelBase
 
         // Extract raw code if needed
         string rawCode = codeInfo;
-        if (isScan && codeInfo.Trim().StartsWith("{") && codeInfo.Contains("\"code\""))
+
+        // QR Code JSON parsing logic based on user input:
+        // {"Secret": "...", "OrderNo": "...", ...}
+        // We need "Secret" as the code.
+        if (isScan && codeInfo.Trim().StartsWith("{"))
         {
             try
             {
+                // Try case-insensitive parsing for robust JSON handling
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 using (JsonDocument doc = JsonDocument.Parse(codeInfo))
                 {
-                    if (doc.RootElement.TryGetProperty("code", out JsonElement codeElement))
+                    // Check for "Secret" (Standard from user instruction)
+                    if (doc.RootElement.TryGetProperty("Secret", out JsonElement secretElement))
                     {
-                        rawCode = codeElement.GetString() ?? "";
+                        rawCode = secretElement.GetString() ?? "";
                     }
                 }
             }
@@ -265,6 +272,13 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void OpenUrl(string url)
     {
+        // Prioritize platform-specific launcher (e.g., Android Intent)
+        if (TicketEasy.App.UrlLauncher != null)
+        {
+            TicketEasy.App.UrlLauncher.Invoke(url);
+            return;
+        }
+
         try
         {
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });

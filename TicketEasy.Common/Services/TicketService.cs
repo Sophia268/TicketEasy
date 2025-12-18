@@ -59,10 +59,9 @@ public class TicketService
             // Mode 2: Ticket Verification
             // GET /api/verifyTicket/{productId}/{code}
 
-            // Handle codeInfo. If it comes from QR code as JSON, extract "code" field if possible.
-            // Based on previous instructions, QR might contain: {"code":"xxxx", ...}
+            // Handle codeInfo. If it comes from QR code as JSON, extract "Secret" field if possible.
+            // Based on user input, QR contains: {"Secret":"xxxx", ...}
             // Or it might be just the code string.
-            // Let's try to parse it as JSON first to see if it has a "code" property.
 
             string actualCode = codeInfo;
             try
@@ -70,9 +69,10 @@ public class TicketService
                 if (codeInfo.Trim().StartsWith("{"))
                 {
                     using var doc = JsonDocument.Parse(codeInfo);
-                    if (doc.RootElement.TryGetProperty("code", out var codeProp))
+                    // Check for Secret
+                    if (doc.RootElement.TryGetProperty("Secret", out var secretProp))
                     {
-                        actualCode = codeProp.GetString() ?? codeInfo;
+                        actualCode = secretProp.GetString() ?? codeInfo;
                     }
                 }
             }
